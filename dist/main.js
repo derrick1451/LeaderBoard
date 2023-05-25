@@ -2,6 +2,96 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./modules/api.js":
+/*!************************!*\
+  !*** ./modules/api.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const api = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/';
+let gameid = '';
+const getApi = async () => {
+  const request = await fetch(`${api}games/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'foo',
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  });
+
+  const getRequest = await request.json();
+  gameid = getRequest.result;
+  return gameid;
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (getApi);
+
+/***/ }),
+
+/***/ "./modules/refresh.js":
+/*!****************************!*\
+  !*** ./modules/refresh.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const api = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/';
+const displayBoard = (array) => {
+  const listContainer = document.querySelector('.list-items');
+  listContainer.innerHTML = '';
+  array.forEach((element) => {
+    const list = document.createElement('li');
+    list.innerHTML = `${element.user}:${element.score}`;
+    listContainer.appendChild(list);
+  });
+};
+const refreash = async (gameid) => {
+  const response = await fetch(`${api}games/${gameid}/scores/`);
+  const getResponse = await response.json();
+  const scores = getResponse.result;
+  displayBoard(scores);
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (refreash);
+
+/***/ }),
+
+/***/ "./modules/upadte.js":
+/*!***************************!*\
+  !*** ./modules/upadte.js ***!
+  \***************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const api = 'https://us-central1-js-capstone-backend.cloudfunctions.net/api/';
+const update = async (gameid, user, score) => {
+  const response = await fetch(`${api}games/${gameid}/scores/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      user, score,
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  });
+  const getResponse = await response.json();
+  return getResponse.result;
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (update);
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js!./src/style.css":
 /*!*************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js!./src/style.css ***!
@@ -549,7 +639,43 @@ var __webpack_exports__ = {};
   \**********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./src/style.css");
+/* harmony import */ var _modules_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/api.js */ "./modules/api.js");
+/* harmony import */ var _modules_upadte_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modules/upadte.js */ "./modules/upadte.js");
+/* harmony import */ var _modules_refresh_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../modules/refresh.js */ "./modules/refresh.js");
 
+
+
+
+
+let gameid;
+const iniatialize = async () => {
+  const existingGameId = localStorage.getItem('gameId');
+  if (existingGameId) {
+    gameid = existingGameId;
+  } else {
+    gameid = await (0,_modules_api_js__WEBPACK_IMPORTED_MODULE_1__["default"])();
+    localStorage.setItem('gameId', gameid);
+  }
+};
+const submitBtn = document.querySelector('.submit');
+const form = document.querySelector('.form');
+submitBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const user = document.querySelector('.name');
+  const score = document.querySelector('.score');
+  const userInput = user.value;
+  const scoreInput = score.value;
+  if (userInput === '' || scoreInput === '') {
+    return null;
+  }
+  await (0,_modules_upadte_js__WEBPACK_IMPORTED_MODULE_2__["default"])(gameid, userInput, scoreInput);
+  return form.reset();
+});
+const refresh = document.querySelector('.refresh');
+refresh.addEventListener('click', async () => {
+  (0,_modules_refresh_js__WEBPACK_IMPORTED_MODULE_3__["default"])(gameid);
+});
+iniatialize();
 })();
 
 /******/ })()
