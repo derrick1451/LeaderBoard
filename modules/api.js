@@ -12,7 +12,7 @@ const getApi = async () => {
   });
 
   const getRequest = await request.json();
-  gameid = getRequest.result;
+  gameid = getRequest.result.slice(14, 34);
   return gameid;
 };
 export default getApi;
