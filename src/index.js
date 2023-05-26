@@ -32,7 +32,7 @@ refresh.addEventListener('click', async () => {
   refreash(gameid);
 });
 iniatialize();
-window.addEventListener('load',async()=>{
-  iniatialize()
-  refreash(gameid)
-})
+window.addEventListener('load', async () => {
+  iniatialize();
+  refreash(gameid);
+});
